@@ -1,0 +1,25 @@
+* {
+  box-sizing: border-box;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif
+}
+
+body {
+  background: #f0f0f0;
+  width: 50rem;
+  margin: 0 auto;
+  padding: 2rem;
+  color: #333;
+}
+
+h1 {
+  color: #555;
+  font-weight: normal;
+  font-size: 4rem;
+  margin: 0 0 2rem;
+}
+
+canvas {
+  background: #fff;
+  box-shadow: 0 5px 11px 0 rgba(0,0,0,0.18),
+              0 4px 15px 0 rgba(0,0,0,0.15);
+}
