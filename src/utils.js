@@ -8,17 +8,24 @@ export function axial2Cube({q: x, r: z}) {
   return {x, y: (-x-z), z}
 }
 
-export function* hexVertices (offset, r) {
-  console.log(offset)
-  const { x, y } = offset
-  const half_r = r / 2.0
-  const alt_r  = (2*r) / SQRT3
+export function* hexesWithinDistance(N) {
+  for(let dx = -N; dx <= N; dx++) {
+    let lowerBound = Math.max(-N, -dx-N)
+    let upperBound = Math.min( N, -dx+N)
 
-  yield {x:       r + x, y:      0 + y }
-  yield {x:  half_r + x, y: -alt_r + y }
-  yield {x: -half_r + x, y: -alt_r + y }
-  yield {x:      -r + x, y:      0 + y }
-  yield {x: -half_r + x, y:  alt_r + y }
-  yield {x:  half_r + x, y:  alt_r + y }
-  yield {x:       r + x, y:      0 + y }
+    for(let dy = lowerBound; dy <= upperBound; dy++) {
+      let dz = -dx-dy
+      yield cube2Axial({x: dx, y: dy, z: dz})
+    }
+  }
+}
+
+export function createCallback(callbackFn) {
+  let self = this
+  return function() {
+    let args = arguments
+    setTimeout(function() {
+      callbackFn.apply(self, args)
+    }, 0)
+  }
 }

@@ -1,19 +1,48 @@
 import $ from 'jquery'
-
-import { hexVertices } from 'utils'
+import { hexesWithinDistance } from 'utils'
+import { isUndefined } from 'lodash'
+import HexLayout from "HexLayout"
 
 export default class HexGrid {
-  constructor({canvas}) {
-    this.canvas = canvas
+  constructor({canvas, origin, hexDistance, hexRadius}) {
+    this.canvas       = canvas
+    this.origin       = origin
+    this.hexDistance  = hexDistance
+    this.hexRadius    = hexRadius
+
+    this.layout = new HexLayout({
+      origin: this.origin,
+      radius: this.hexRadius
+    })
+
+    $(this.canvas.el).on("mousemove", this.detectHex.bind(this))
   }
 
   draw() {
-    this.canvas.drawPath((path) => {
-      const points = hexVertices({x:100, y:100}, 50)
+    for(let hex of hexesWithinDistance(this.hexDistance)) {
+      const {x:x0, y:y0} = this.layout.hexToPixelOrigin(hex)
 
-      for(let {x,y} of points) {
-        path.lineTo(x, y)
+      let fillStyle = ""
+      if(!isUndefined(this.selectedHex) && hex.q == this.selectedHex.q && hex.r == this.selectedHex.r) {
+        fillStyle = "rgb(127,127,127)"
       }
-    }, "rgb(255,0,0)")
+
+      this.canvas.drawPath(path => {
+        for(let {x,y} of this.layout.hexToPixelVertices(hex)) {
+          path.lineTo(x, y)
+        }
+      }, "rgb(0,0,0)", fillStyle)
+
+      this.canvas.drawPoint(x0, y0)
+    }
+  }
+
+  detectHex(event) {
+    this.selectedHex = this.layout.pixelToHexOrigin({
+      x: event.offsetX,
+      y: event.offsetY
+    })
+    this.canvas.clear()
+    this.draw()
   }
 }

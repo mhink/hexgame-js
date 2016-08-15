@@ -1,6 +1,7 @@
 import $ from "jquery";
 
 const ASPECT_RATIO = (4.0 / 3.0)
+const TWO_PI = Math.PI * 2
 
 export default class Canvas {
   constructor({parent}) {
@@ -21,19 +22,26 @@ export default class Canvas {
     this.ctx.restore()
   }
 
+  drawPoint(x, y) {
+    this.drawPath(path => {
+      path.arc(x, y, 2, 0, TWO_PI, false)
+    }, "rgb(0,0,0)")
+  }
+
   drawPath(drawFn, strokeStyle, fillStyle) {
     this.draw((ctx) => {
       var path = new Path2D()
       drawFn(path)
 
+      if(fillStyle) {
+        console.log("filling")
+        ctx.fillStyle = fillStyle
+        ctx.fill(path)
+      }
+
       if(strokeStyle) {
         ctx.strokeStyle = strokeStyle
         ctx.stroke(path)
-      }
-
-      if(fillStyle) {
-        ctx.fillStyle = fillStyle
-        ctx.fill(path)
       }
     })
   }
